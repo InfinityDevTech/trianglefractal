@@ -9,19 +9,19 @@ struct Point {
     y: i64,
 }
 
-const IMG_WIDTH: u32 = 5000;
-const IMG_HEIGHT: u32 = 5000;
+const IMG_WIDTH: u32 = 2560;
+const IMG_HEIGHT: u32 = 1080;
 
 const POINT1: Point = Point {
-    x: (IMG_HEIGHT / 2) as i64,
+    x: (IMG_WIDTH / 2) as i64,
     y: 0,
 };
-const POINT2: Point = Point { x: 0, y: IMG_HEIGHT as i64 };
-const POINT3: Point = Point { x: IMG_WIDTH as i64, y: IMG_HEIGHT as i64 };
+const POINT2: Point = Point { x: 0, y: (IMG_HEIGHT - 1) as i64 };
+const POINT3: Point = Point { x: (IMG_WIDTH - 1) as i64, y: (IMG_HEIGHT - 1) as i64 };
 
 fn main() {
     let iterations = 100000000;
-    let mut image = RgbImage::new(IMG_WIDTH + 1, IMG_HEIGHT + 1);
+    let mut image = RgbImage::new(IMG_WIDTH, IMG_HEIGHT);
 
     //for x in 0..1000 {
     //    for y in 0..1000 {
@@ -34,8 +34,9 @@ fn main() {
     draw_line(&mut image, POINT2.x, POINT2.y, POINT3.x, POINT3.y);
     draw_line(&mut image, POINT3.x, POINT3.y, POINT1.x, POINT1.y);
 
-    let mut current_iter = 0;
+    let start_ms = std::time::Instant::now();
 
+    let mut current_iter = 0;
     let mut start_point = get_random_triangle_point();
     loop {
         let vertex = get_random_vertex();
@@ -47,10 +48,14 @@ fn main() {
         if current_iter >= iterations {
             break;
         }
-        println!("Current iter {}", current_iter);
+
+        //if current_iter % 10000 == 0 {
+        //    println!("Current iter {}", current_iter);
+        //}
         current_iter += 1;
     }
 
+    println!("Done in {}ms", start_ms.elapsed().as_millis());
     image.save("test.png").unwrap();
 }
 
